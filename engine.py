@@ -1,4 +1,6 @@
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+
 import toml
 
 def build_engine():
@@ -9,3 +11,6 @@ def build_engine():
 def load_configs(config_file="config/database.toml"):
   with open(config_file) as f:
     return toml.loads(f.read())
+
+def session():
+  return sessionmaker(bind=build_engine())()

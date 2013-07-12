@@ -20,8 +20,9 @@ class Message(Base):
   signature  = Column(String(255))
   message_headers = Column(Text)
 
-  def __init__(self, name, fullname, password):
-    pass
+  def __init__(self, attributes):
+    for key in attributes.keys():
+      setattr(self, key, attributes[key])
 
   def __repr__(self):
     return "<Message('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
