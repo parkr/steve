@@ -1,0 +1,11 @@
+{
+  "recipient":    "talk@jekyllrb.com",
+  "sender":       "jekyll-user@example.com",
+  "from":         "Jekyll User <jekyll-user@example.com>",
+  "subject":      "[Plugin] jekyll-plugins New Release",
+  "body-plain":   "Hello all,\n\nWe have a very exciting release of jekyll-plugins ready for you.\n\nCheck it out: https://github.com/jekyll/jekyll-plugins\n\nLove,\nJekyll Core Team",
+  "stripped-text": "Hello all,\n\nWe have a very exciting release of jekyll-plugins ready for you.\n\nCheck it out: https://github.com/jekyll/jekyll-plugins\n\nLove,\nJekyll Core Team",
+  "timestamp":     1373668844,
+  "signature":     "some realllyafnaeinejafjfgieaownifangioengoagnifoeea",
+  "message-headers": "{afihaoifnawonfiaw}"
+}
