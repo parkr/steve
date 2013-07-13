@@ -1,5 +1,6 @@
 import engine
 
+from sqlalchemy.sql import select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData, Table
 from sqlalchemy import Column, Integer, String, Text
@@ -27,10 +28,15 @@ class Message(Base):
   def __repr__(self):
     return "<Message('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
 
-if __name__ == "__main__":
-  engine = engine.build_engine()
+def latest():
+  conn = engine.build_engine().connect()
+  s = select([" * FROM messages"])
+  return conn.execute(s)
 
-  metadata = MetaData(bind=engine)
+if __name__ == "__main__":
+  e = engine.build_engine()
+
+  metadata = MetaData(bind=e)
   messages_table = Table('messages', metadata,
     Column('id', Integer, primary_key=True),
     Column('recipient', String(255)),
