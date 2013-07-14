@@ -2,3 +2,4 @@ tornado
 sqlalchemy
 pymysql
 toml
+python-daemon
