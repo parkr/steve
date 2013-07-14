@@ -28,6 +28,13 @@ Set the `forward()` rule in your MailGun preferences:
 forward("http://my_server.com/messages/store")
 ```
 
+On your server, just run the following and you're good to go:
+
+```bash
+~/code/steve$ ./server.py
+# => [I 130714 21:08:29 pid:11] Checking pidfile '/var/run/steve.8888.pid'
+```
+
 ## License
 
 MIT
