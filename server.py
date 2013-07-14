@@ -24,7 +24,8 @@ class MainHandler(tornado.web.RequestHandler):
 
 class MessagesFetchHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write(json_encode( [m.as_json() for m in message.latest()] ))
+      self.set_header("Content-Type", "application/json")
+      self.write(json_encode( [m.as_json() for m in message.latest()] ))
 
 class MessagesStoreHandler(tornado.web.RequestHandler):
     def post(self):
