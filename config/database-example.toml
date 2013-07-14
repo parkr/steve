@@ -1,0 +1,4 @@
+host     = "localhost"
+database = "mailing_list"
+username = "mysql_user"
+password = "users_password"
