@@ -1,4 +1,5 @@
 import engine
+import re
 
 from sqlalchemy.sql import select
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,6 +10,8 @@ Base = declarative_base()
 
 class Message(Base):
   __tablename__ = 'messages'
+
+  DASHES = '-'
 
   id         = Column(Integer, primary_key=True)
   recipient  = Column(String(255))
@@ -22,11 +25,12 @@ class Message(Base):
   message_headers = Column(Text)
 
   def __init__(self, attributes):
+    underscorize = re.compile(self.DASHES, re.MULTILINE)
     for key in attributes.keys():
-      setattr(self, key, attributes[key])
+      setattr(self, underscorize.sub('_', key), attributes[key])
 
   def __repr__(self):
-    return "<Message('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
+    return "<Message('%s','%s', '%s')>" % (self.id, self.who_from, self.timestamp)
 
   def as_json(self):
     return {
