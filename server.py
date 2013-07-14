@@ -24,24 +24,7 @@ class MainHandler(tornado.web.RequestHandler):
 
 class MessagesFetchHandler(tornado.web.RequestHandler):
     def get(self):
-        latest = message.latest().fetchall()
-        logging.info("%s", latest)
-        msgs = []
-        for msg in latest:
-          msgs.append({
-            "id":         int(msg[0]),
-            "recipient":  msg[1],
-            "sender":     msg[2],
-            'who_from':   msg[3],
-            'subject':    msg[4],
-            'body_plain': msg[5],
-            'stripped_text': msg[6],
-            'timestamp':     msg[7],
-            'signature':     msg[8],
-            'message_headers': msg[9]
-          })
-        logging.info("%s", msgs)
-        self.write(json_encode(msgs))
+        self.write(json_encode( [m.as_json() for m in message.latest()] ))
 
 class MessagesStoreHandler(tornado.web.RequestHandler):
     def post(self):

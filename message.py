@@ -28,10 +28,38 @@ class Message(Base):
   def __repr__(self):
     return "<Message('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
 
+  def as_json(self):
+    return {
+        "id":              self.id,
+        "recipient":       self.recipient,
+        "sender":          self.sender,
+        'who_from':        self.who_from,
+        'subject':         self.subject,
+        'body_plain':      self.body_plain,
+        'stripped_text':   self.stripped_text,
+        'timestamp':       self.timestamp,
+        'signature':       self.signature,
+        'message_headers': self.message_headers
+    }
+
 def latest():
   conn = engine.build_engine().connect()
-  s = select([" * FROM messages"])
-  return conn.execute(s)
+  results = conn.execute(select([" * FROM messages"])).fetchall()
+  return [build_message(r) for r in results]
+
+def build_message(result):
+  return Message({
+      "id":              int(result[0]),
+      "recipient":       result[1],
+      "sender":          result[2],
+      'who_from':        result[3],
+      'subject':         result[4],
+      'body_plain':      result[5],
+      'stripped_text':   result[6],
+      'timestamp':       result[7],
+      'signature':       result[8],
+      'message_headers': result[9]
+  })
 
 if __name__ == "__main__":
   e = engine.build_engine()
