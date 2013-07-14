@@ -23,6 +23,9 @@ MAILGUN_OPTS = ["recipient", "sender", "from", "subject", "body-plain", "strippe
   "timestamp", "signature", "message-headers"]
 
 class MainHandler(tornado.web.RequestHandler):
+    def head(self):
+        pass
+
     def get(self):
         self.write("Nothing to see here quite yet...")
 
@@ -43,11 +46,16 @@ class MessagesStoreHandler(tornado.web.RequestHandler):
     def extract_args_dict(self):
       attributes = {}
       for opt in MAILGUN_OPTS:
-        logging.info(("%s=\"%s\"" % (opt, self.json_args.get(opt))))
-        attributes[opt] = self.json_args.get(opt)
+        if self.json_args is not None:
+          logging.info(("%s=\"%s\"" % (opt, self.json_args.get(opt))))
+          attributes[opt] = self.json_args.get(opt)
+        else:
+          logging.info(("%s=\"%s\"" % (opt, self.get_arguments(opt))))
+          attributes[opt] = self.get_arguments(opt)
       return attributes
     
     def prepare(self):
+      self.json_args = None
       if self.request.headers.get("Content-Type") == "application/json":
         self.json_args = json_decode(self.request.body) 
 
