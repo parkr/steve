@@ -8,7 +8,7 @@ A simple python server for storing messages from MailGun to MySQL.
 
 Run `server.py` in the background and add the following to your `nginx.conf`:
 
-```conf
+```nginx
 server {
   listen 80;
   server_name my_server.com;
