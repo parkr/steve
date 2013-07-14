@@ -1,6 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
+import os
 import toml
 
 def build_engine():
@@ -9,6 +10,7 @@ def build_engine():
     conf["password"], conf["host"], conf["database"]))
 
 def load_configs(config_file="config/database.toml"):
+  config_file = os.path.dirname(os.path.realpath(__file__)) + "/" + config_file
   with open(config_file) as f:
     return toml.loads(f.read())
 
