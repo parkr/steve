@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
+import daemon
 import engine
 import logging
 import message
+import os
+import pid
 
 import tornado.httpserver
 import tornado.ioloop
@@ -13,6 +16,7 @@ from tornado.escape import json_decode, json_encode
 from tornado.options import define, options
 
 define("port", default=8888, help="run on the given port", type=int)
+define("pidfile", default="/var/run/steve.%i.pid", help="file in which to store the server pid", type=str)
 
 # mailgun
 MAILGUN_OPTS = ["recipient", "sender", "from", "subject", "body-plain", "stripped-text",
@@ -47,17 +51,38 @@ class MessagesStoreHandler(tornado.web.RequestHandler):
       if self.request.headers.get("Content-Type") == "application/json":
         self.json_args = json_decode(self.request.body) 
 
+def application():
+  return tornado.web.Application([
+    (r"/", MainHandler),
+    (r"/messages", MessagesFetchHandler),
+    (r"/messages/store", MessagesStoreHandler)
+  ])
+
+def log_file_handler():
+  log_file = 'log/tornado.%s.log' % options.port
+  return open(os.path.join(os.path.dirname(os.path.abspath(__file__)), log_file), 'a+')
+
+def daemonize(http_server):
+  pidfile_path = options.pidfile % options.port
+  pid.check(pidfile_path)
+  log = log_file_handler()
+  daemon_context = daemon.DaemonContext(stdout=log, stderr=log, working_directory='.')
+  with daemon_context:
+    pid.write(pidfile_path)
+
+    # initialize the application
+    http_server.listen(options.port)
+
+    try:
+      # enter the Tornado IO loop
+        tornado.ioloop.IOLoop.instance().start()
+    finally:
+      # ensure we remove the pidfile
+        pid.remove(pidfile_path)
+
 def main():
     tornado.options.parse_command_line()
-    application = tornado.web.Application([
-        (r"/", MainHandler),
-        (r"/messages", MessagesFetchHandler),
-        (r"/messages/store", MessagesStoreHandler)
-    ])
-    http_server = tornado.httpserver.HTTPServer(application)
-    http_server.listen(options.port)
-    tornado.ioloop.IOLoop.instance().start()
-
+    daemonize(tornado.httpserver.HTTPServer(application()))
 
 if __name__ == "__main__":
     main()
